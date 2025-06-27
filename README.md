@@ -49,7 +49,7 @@ Select an interface by number: 1
 [2025-06-27 20:27:58.743] <inf> When you're done scanning, press CTRL+C there to stop
 ```
 
-After pressing Control+C, `airodump-ng` starts to run in order to begin analyzing WiFi devices connected to access points.
+After pressing [Enter], `airodump-ng` starts to run in order to begin analyzing WiFi devices connected to access points.
 
 ```
  CH  1 ][ Elapsed: 12 s ][ 2025-06-27 20:28 
