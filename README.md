@@ -39,6 +39,19 @@ At this point, the script will:
   - Devices connected to them.
 
 ```
+Select an interface by number: 1
+[2025-06-27 20:27:58.718] <inf> You selected: wlx00e0202d05b8
+[2025-06-27 20:27:58.737] <inf> 🔻 ifconfig down: OK
+[2025-06-27 20:27:58.739] <inf> 📡 iwconfig monitor: OK
+[2025-06-27 20:27:58.743] <inf> 🔺 ifconfig up: OK
+[2025-06-27 20:27:58.743] <inf> Press [Enter] to begin scanning with airodump-ng...
+[2025-06-27 20:27:58.743] <inf> You will run airodump-ng in new window
+[2025-06-27 20:27:58.743] <inf> When you're done scanning, press CTRL+C there to stop
+```
+
+After pressing Control+C, `airodump-ng` starts to run in order to begin analyzing WiFi devices connected to access points.
+
+```
  CH  1 ][ Elapsed: 12 s ][ 2025-06-27 20:28 
 
  BSSID              PWR  Beacons    #Data, #/s  CH   MB   ENC CIPHER  AUTH ESSID
