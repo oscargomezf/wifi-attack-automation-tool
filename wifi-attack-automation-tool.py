@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 # -----------------------------------------------------------------------------
 # /**
-#  * @file deauth.py
+#  * @file wifi-attack-automation-tool.py
 #  * @author Oscar Gomez Fuente <oscargomezf@gmail.com>
 #  * @modified Oscar Gomez Fuente <oscargomezf@gmail.com>
-#  * @date 2025-06-23 17:39:37 
-#  * @version 1.1
+#  * @date 2025-06-27 21:43:52 
+#  * @version c2dc9a4
 #  * @section DESCRIPTION
 #  *     This Python script is part of a custom library designed to perform
 #  *     WiFi Deauthentication (DeAuth) attacks using the Scapy framework. The
