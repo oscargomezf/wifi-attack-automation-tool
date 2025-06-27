@@ -6,7 +6,7 @@
 #  * @author Oscar Gomez Fuente <oscargomezf@gmail.com>
 #  * @modified Oscar Gomez Fuente <oscargomezf@gmail.com>
 #  * @date 2025-06-23 17:39:37 
-#  * @version 1.0
+#  * @version 1.1
 #  * @section DESCRIPTION
 #  *     This library verifies all the required Python package dependencies and tools
 #  *     necessary to run the wifi-attack_automation-tool

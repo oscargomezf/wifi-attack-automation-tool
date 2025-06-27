@@ -111,6 +111,13 @@ Once the number of packets is confirmed:
 - Simultaneously, another process will start to **send the DeAuth packets**.
 
 ```
+[2025-06-27 20:28:23.925] <inf> Handshake capture started: output → /home/oscargomezf/GIT/wifi-attack-automation-tool/captures/MAC_F6B111459825_BSSID_ECBEDDAD0896_CH_9_20250627_2028-01.cap
+[2025-06-27 20:28:23.925] <inf> Starting deauth attack on F6:B1:11:45:98:25 → AP EC:BE:DD:AD:08:96
+[2025-06-27 20:28:23.927] <inf> Sending 25 DeAuth packets to F6:B1:11:45:98:25 from EC:BE:DD:AD:08:96
+.20:28:23  Created capture file "/home/oscargomezf/GIT/wifi-attack-automation-tool/captures/MAC_F6B111459825_BSSID_ECBEDDAD0896_CH_9_20250627_2028-01.cap".
+```
+
+```
  CH  9 ][ Elapsed: 12 s ][ 2025-06-27 20:28 ][ WPA handshake: EC:BE:DD:AD:08:96
 
  BSSID              PWR RXQ  Beacons    #Data, #/s  CH   MB   ENC CIPHER  AUTH ESSID
