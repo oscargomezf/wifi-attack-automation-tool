@@ -5,8 +5,8 @@
 #  * @file wifi-attack-automation-tool.py
 #  * @author Oscar Gomez Fuente <oscargomezf@gmail.com>
 #  * @modified Oscar Gomez Fuente <oscargomezf@gmail.com>
-#  * @date 2025-06-28 09:29:34 
-#  * @version 9b47e74
+#  * @date 2025-06-28 09:58:08 
+#  * @version 0888950
 #  * @section DESCRIPTION
 #  *     This Python script is part of a custom library designed to perform
 #  *     WiFi Deauthentication (DeAuth) attacks using the Scapy framework. The
@@ -486,7 +486,7 @@ def main():
 		# Select target from the associated list
 		target_mac, ap_mac, channel = select_target_device(associated_clients)
 
-		# Step 6: DeAuth injection
+		# Step 6: Deauth injection and airodump-ng launch
 		# Prompt user for deauth packet count
 		count_str = input("Enter number of deauth packets to send [default: 25]: ").strip()
 		try:
@@ -523,7 +523,7 @@ def main():
 				os.system("stty sane")
 				print("\n")
 				delete_non_cap_files()
-				# Convert pcap to hash
+				# Step 8: Convert pcap to hash
 				if os.path.isfile(f"{output_prefix_file}-01.cap"):
 					ph.print_inf(f"Convert pcap to hash using hcxpcapngtool\n")
 					hash_output_file = f"{current_path}/captures/wpa2.hc22000"
@@ -531,7 +531,7 @@ def main():
 					res = convert_pcap_to_hash(pcap_input_file, hash_output_file)
 					if res:
 						show_hash(hash_output_file)
-						# Step 8: Wordlist selection for hashcat execution
+						# Step 9: Wordlist selection for hashcat execution
 						ph.print_inf(f"Trying to crack the hash using Hashcat\n")
 						selected_wordlist = select_wordlist_file(wordlists_path)
 						if selected_wordlist == "EXIT":
@@ -539,7 +539,7 @@ def main():
 							flag_searh_password = False
 						elif selected_wordlist:
 							ph.print_inf(f"this task may take several minutes...\n")
-							# Step 9: Running hashcat
+							# Step 10: Running hashcat
 							password = crack_hash_with_hashcat(
 								hash_file=hash_output_file,
 								wordlist_file=selected_wordlist,
